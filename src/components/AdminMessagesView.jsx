@@ -1,7 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { ClockIcon, UserIcon, BotIcon, WrenchIcon } from "./Icons"
+import PedidosList from "./PedidosList"
+import ChatHeader from "./ChatHeader"
+import ChatMessages from "./ChatMessages"
+import ChatFooter from "./ChatFooter"
 
 // Datos de ejemplo - reemplazar con API de Airtable
 const mockPedidos = [
@@ -160,160 +163,18 @@ const AdminMessagesView = () => {
   const selectedMessages = mockMessages[selectedPedido] || []
   const currentPedido = mockPedidos.find((p) => p.id === selectedPedido)
 
-  const getSenderIcon = (sender) => {
-    switch (sender) {
-      case "cliente":
-        return <UserIcon />
-      case "bot":
-        return <BotIcon />
-      case "instalador":
-        return <WrenchIcon />
-      default:
-        return <UserIcon />
-    }
-  }
-
-  const getSenderLabel = (sender) => {
-    switch (sender) {
-      case "cliente":
-        return "Cliente"
-      case "bot":
-        return "Bot"
-      case "instalador":
-        return "Instalador"
-      default:
-        return "Usuario"
-    }
-  }
-
-  const getEstadoBadge = (estado) => {
-    const baseClasses = "px-2 py-1 rounded text-xs font-medium"
-    switch (estado) {
-      case "recibido":
-        return `${baseClasses} bg-yellow-500 text-black`
-      case "en_asignacion":
-        return `${baseClasses} bg-blue-500 text-white`
-      case "asignado":
-        return `${baseClasses} bg-green-500 text-white`
-      case "finalizado":
-        return `${baseClasses} bg-gray-500 text-white`
-      case "no_asignado":
-        return `${baseClasses} bg-red-500 text-white`
-      default:
-        return `${baseClasses} bg-gray-500 text-white`
-    }
-  }
-
-  const getMessageClasses = (sender) => {
-    const baseClasses = "max-w-md p-3 rounded-lg border-2 bg-gray-800"
-    switch (sender) {
-      case "cliente":
-        return `${baseClasses} border-green-500 text-green-400`
-      case "bot":
-        return `${baseClasses} border-blue-500 text-blue-400`
-      case "instalador":
-        return `${baseClasses} border-red-500 text-red-400`
-      default:
-        return `${baseClasses} border-gray-500 text-gray-400`
-    }
-  }
-
-  const getMessageAlignment = (sender) => {
-    switch (sender) {
-      case "cliente":
-        return "justify-start"
-      case "bot":
-        return "justify-end"
-      case "instalador":
-        return "justify-center"
-      default:
-        return "justify-start"
-    }
-  }
-
   return (
     <div className="flex h-screen bg-gray-900 text-white">
-      {/* Panel izquierdo - Lista de pedidos */}
-      <div className="w-80 border-r-2 border-gray-600 p-4 overflow-y-auto scrollbar-custom">
-        <h2 className="text-xl font-bold mb-4 text-center">Pedidos</h2>
-        <div className="space-y-3">
-          {mockPedidos.map((pedido) => (
-            <button
-              key={pedido.id}
-              onClick={() => setSelectedPedido(pedido.id)}
-              className={`w-full p-4 rounded-lg border-2 transition-all duration-200 hover:bg-gray-800 text-left ${selectedPedido === pedido.id ? "border-white bg-gray-800" : "border-gray-600 hover:border-gray-500"
-                }`}
-            >
-              <div className="font-medium mb-1">Pedido {pedido.id}</div>
-              <div className="text-sm text-gray-400 mb-1">{pedido.clienteNombre}</div>
-              <div className="text-xs text-gray-500 mb-2">
-                {pedido.zona} • {pedido.rubro}
-              </div>
-              <div className="flex items-center justify-between">
-                <span className={getEstadoBadge(pedido.estado)}>{pedido.estado.replace("_", " ")}</span>
-                <div className="flex items-center text-xs text-gray-500 gap-1">
-                  <ClockIcon className="w-3 h-3" />
-                  {pedido.fechaCreacion.toLocaleTimeString("es-AR", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
+      <PedidosList
+        pedidos={mockPedidos}
+        selectedPedido={selectedPedido}
+        onSelectPedido={setSelectedPedido}
+      />
 
-      {/* Panel derecho - Chat de mensajes */}
       <div className="flex-1 flex flex-col">
-        {/* Header del chat */}
-        <div className="border-b-2 border-gray-600 p-4 flex items-center justify-between bg-gray-800">
-          <div>
-            <h3 className="text-lg font-semibold">
-              Pedido {selectedPedido} - {currentPedido?.clienteNombre}
-            </h3>
-            <p className="text-sm text-gray-400">
-              {currentPedido?.zona} • {currentPedido?.rubro}
-            </p>
-          </div>
-          <span className={getEstadoBadge(currentPedido?.estado || "recibido")}>
-            {currentPedido?.estado?.replace("_", " ") || "recibido"}
-          </span>
-        </div>
-
-        {/* Área de mensajes */}
-        <div className="flex-1 p-4 overflow-y-auto scrollbar-custom">
-          <div className="space-y-4">
-            {selectedMessages.map((message) => (
-              <div key={message.id} className={`flex ${getMessageAlignment(message.sender)}`}>
-                <div className={getMessageClasses(message.sender)}>
-                  <div className="flex items-center gap-2 mb-2">
-                    {getSenderIcon(message.sender)}
-                    <span className="text-sm font-medium">{getSenderLabel(message.sender)}</span>
-                    <span className="text-xs text-gray-500 ml-auto">
-                      {message.timestamp.toLocaleTimeString("es-AR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </div>
-                  <p className="text-sm leading-relaxed">{message.content}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer con información adicional */}
-        <div className="border-t-2 border-gray-600 p-4 bg-gray-800 flex items-center justify-between text-sm text-gray-400">
-          <span>Total mensajes: {selectedMessages.length}</span>
-          <span>
-            Última actividad:{" "}
-            {selectedMessages.length > 0
-              ? selectedMessages[selectedMessages.length - 1].timestamp.toLocaleString("es-AR")
-              : "Sin actividad"}
-          </span>
-        </div>
+        <ChatHeader pedido={currentPedido} selectedPedido={selectedPedido} />
+        <ChatMessages messages={selectedMessages} />
+        <ChatFooter messages={selectedMessages} />
       </div>
     </div>
   )
