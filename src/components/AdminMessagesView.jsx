@@ -164,14 +164,10 @@ const AdminMessagesView = () => {
   const currentPedido = mockPedidos.find((p) => p.id === selectedPedido)
 
   return (
-    <div className="flex h-screen bg-gray-900 text-white">
-      <PedidosList
-        pedidos={mockPedidos}
-        selectedPedido={selectedPedido}
-        onSelectPedido={setSelectedPedido}
-      />
+    <div className="flex h-full bg-gray-900 text-white">
+      <PedidosList pedidos={mockPedidos} selectedPedido={selectedPedido} onSelectPedido={setSelectedPedido} />
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-gray-900">
         <ChatHeader pedido={currentPedido} selectedPedido={selectedPedido} />
         <ChatMessages messages={selectedMessages} />
         <ChatFooter messages={selectedMessages} />

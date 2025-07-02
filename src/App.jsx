@@ -1,10 +1,8 @@
-import './App.css'
-import AdminMessagesView from './components/AdminMessagesView'
+import "./App.css"
+import Dashboard from "./components/Dashboard"
 
 function App() {
-  return (
-    <AdminMessagesView />
-  )
+  return <Dashboard />
 }
 
 export default App
