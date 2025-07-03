@@ -19,6 +19,9 @@ function AdminMessagesView() {
   }, [orders]);
 
   const currentPedido = orders.find((p) => p.id === selectedPedido);
+  const filteredMessages = messages.filter(
+    (msg) => Array.isArray(msg.order) && msg.order.includes(selectedPedido)
+  );
 
   return (
     <div className="relative flex h-screen bg-gray-900 text-white overflow-hidden">
@@ -65,8 +68,8 @@ function AdminMessagesView() {
       {/* Chat */}
       <div className="flex-1 flex flex-col">
         <ChatHeader pedido={currentPedido} selectedPedido={selectedPedido} />
-        <ChatMessages messages={messages} loading={loadingMessages} />
-        <ChatFooter messages={messages} loading={loadingMessages} />
+        <ChatMessages messages={filteredMessages} loading={loadingMessages} />
+        <ChatFooter messages={filteredMessages} loading={loadingMessages} />
       </div>
     </div>
   );

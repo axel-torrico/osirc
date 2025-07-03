@@ -21,7 +21,7 @@ const Dashboard = () => {
         onSubSectionChange={setActiveSubSection}
       />
 
-      <div className="flex-1 p-6 bg-gray-900 overflow-hidden">
+      <div className="flex-1 bg-gray-900 overflow-hidden">
         <DashboardContent activeSection={activeSection} activeSubSection={activeSubSection} />
       </div>
     </div>

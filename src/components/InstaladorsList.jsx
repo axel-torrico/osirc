@@ -122,8 +122,8 @@ const InstaladorsList = () => {
 
   return (
     <div className="h-full bg-gray-900 text-white">
-      <div className="border-2 border-gray-600 rounded-2xl p-4 h-full flex flex-col">
-        <div className="flex items-center justify-between mb-6">
+      <div className="h-full flex flex-col">
+        <div className="p-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Instaladores</h1>
           <div className="flex gap-4">
             <input
