@@ -5,8 +5,6 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
   const renderContent = () => {
     if (activeSection === "pedidos") {
       if (activeSubSection === "Lista") {
-        return <AdminMessagesView />
-      } else if (activeSubSection === "Detalles") {
         return (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -15,6 +13,8 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
             </div>
           </div>
         )
+      } else if (activeSubSection === "Chat") {
+        return <AdminMessagesView />
       }
     }
 

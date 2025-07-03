@@ -19,7 +19,7 @@ const NavigationMenu = ({ activeSection, activeSubSection, onSectionChange, onSu
       label: "Pedidos",
       hasArrow: true,
       hasDropdown: true,
-      subItems: ["Lista", "Detalles"],
+      subItems: ["Lista", "Chat"],
     },
   ]
 
