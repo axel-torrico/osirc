@@ -8,6 +8,10 @@ const Dashboard = () => {
   const [activeSection, setActiveSection] = useState("dashboard")
   const [activeSubSection, setActiveSubSection] = useState(null)
 
+  // Debug: agregar console.log para verificar el estado
+  console.log("Active section:", activeSection)
+  console.log("Active sub-section:", activeSubSection)
+
   return (
     <div className="flex h-screen bg-gray-900 text-white overflow-hidden">
       <NavigationMenu
