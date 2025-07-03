@@ -18,6 +18,7 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
       }
     }
 
+
     if (activeSection === "instaladores") {
       return <InstaladorsList />
     }
