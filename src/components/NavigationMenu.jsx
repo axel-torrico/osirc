@@ -45,8 +45,8 @@ const NavigationMenu = ({ activeSection, activeSubSection, onSectionChange, onSu
   }
 
   return (
-    <div className="w-80 border-r-2 border-gray-600 p-6 bg-gray-900 h-full overflow-hidden">
-      <div className="p-6 h-full bg-gray-900 flex flex-col">
+    <div className="w-60 border-r-2 border-gray-600 p-4 bg-gray-900 h-full overflow-hidden">
+      <div className="h-full bg-gray-900 flex flex-col">
         <h2 className="text-xl font-bold mb-8 text-center">Menú</h2>
 
         <div className="space-y-4 flex-1 overflow-y-auto">
