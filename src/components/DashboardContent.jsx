@@ -1,4 +1,5 @@
 import AdminMessagesView from "./AdminMessagesView"
+import InstaladorsList from "./InstaladorsList"
 
 const DashboardContent = ({ activeSection, activeSubSection }) => {
   const renderContent = () => {
@@ -18,23 +19,14 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
     }
 
     if (activeSection === "instaladores") {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mb-4">
-              {activeSubSection ? `${activeSubSection} de Instaladores` : "Instaladores"}
-            </h3>
-            <p className="text-gray-400">Gestión de instaladores - En desarrollo</p>
-          </div>
-        </div>
-      )
+      return <InstaladorsList />
     }
 
     if (activeSection === "zonas") {
       return (
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
-            <h3 className="text-2xl font-bold mb-4">{activeSubSection ? `${activeSubSection} de Zonas` : "Zonas"}</h3>
+            <h3 className="text-2xl font-bold mb-4">Zonas</h3>
             <p className="text-gray-400">Gestión de zonas - En desarrollo</p>
           </div>
         </div>

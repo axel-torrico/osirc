@@ -1,5 +1,5 @@
 const EstadoBadge = ({ estado }) => {
-  const baseClasses = "px-2 py-1 rounded text-xs font-medium"
+  const baseClasses = "px-2 py-2 rounded text-xs font-medium ";
   switch (estado) {
     case "recibido":
       return <span className={`${baseClasses} bg-yellow-500 text-black`}>recibido</span>
