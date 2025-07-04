@@ -5,6 +5,11 @@ import { ChevronRightIcon, ChevronDownIcon } from "./Icons"
 const NavigationMenu = ({ activeSection, activeSubSection, onSectionChange, onSubSectionChange }) => {
   const menuItems = [
     {
+      id: "dashboard",
+      label: "Dashboard",
+      hasArrow: true,
+    },
+    {
       id: "instaladores",
       label: "Instaladores",
       hasArrow: true,
@@ -45,16 +50,18 @@ const NavigationMenu = ({ activeSection, activeSubSection, onSectionChange, onSu
   }
 
   return (
-    <div className="w-60 border-r-2 border-gray-600 p-4 bg-gray-900 h-full overflow-hidden">
-      <div className="h-full bg-gray-900 flex flex-col">
-        <h2 className="text-xl font-bold mb-8 text-center">Menú</h2>
+    <div className="w-60 p-4 bg-gray-800 h-full overflow-hidden">
+      <div className="h-fullflex flex-col">
+        <div className="mb-6 pb-4 border-b-1 border-gray-600">
+          <h2 className="text-xl font-bold text-center">OSIRC</h2>
+        </div>
 
-        <div className="space-y-4 flex-1 overflow-y-auto">
+        <div className="space-y-3 flex-1 overflow-y-auto">
           {menuItems.map((item) => (
             <div key={item.id}>
               <button
                 onClick={() => handleMainItemClick(item.id, item.hasDropdown)}
-                className={`w-full p-4 rounded-xl border-2 transition-all duration-200 hover:bg-gray-800 flex items-center justify-between ${activeSection === item.id ? "border-white bg-gray-800" : "border-gray-600 hover:border-gray-500"
+                className={`w-full px-4 py-2 rounded-xl transition-all duration-200 hover:bg-gray-700 hover:text-white flex items-center justify-between ${activeSection === item.id ? "text-gray-900 bg-gray-300" : "hover:border-gray-500"
                   }`}
               >
                 <span className="font-medium">{item.label}</span>
@@ -62,11 +69,11 @@ const NavigationMenu = ({ activeSection, activeSubSection, onSectionChange, onSu
                   <>
                     {item.hasDropdown ? (
                       <ChevronDownIcon
-                        className={`w-5 h-5 transition-transform duration-200 ${activeSection === item.id ? "rotate-180" : ""
+                        className={`w-6 h-6 transition-transform duration-200 ${activeSection === item.id ? "rotate-180" : ""
                           }`}
                       />
                     ) : (
-                      <ChevronRightIcon className="w-5 h-5" />
+                      <ChevronRightIcon className="w-6 h-6" />
                     )}
                   </>
                 )}
@@ -79,8 +86,8 @@ const NavigationMenu = ({ activeSection, activeSubSection, onSectionChange, onSu
                     <button
                       key={subItem}
                       onClick={() => handleSubItemClick(subItem)}
-                      className={`w-full p-3 rounded-lg border-2 transition-all duration-200 hover:bg-gray-800 text-sm ${activeSubSection === subItem
-                        ? "border-blue-400 bg-gray-800 text-blue-400"
+                      className={`w-full py-2 rounded-lg transition-all duration-200 bg-gray-700 hover:bg-gray-600 text-sm ${activeSubSection === subItem
+                        ? "border border-blue-400 bg-gray-800 text-blue-400"
                         : "border-gray-600 hover:border-gray-500"
                         }`}
                     >
