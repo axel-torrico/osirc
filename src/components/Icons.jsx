@@ -68,3 +68,19 @@ export const HashIcon = ({ className = "w-4 h-4" }) => (
     <line x1="16" y1="3" x2="14" y2="21"></line>
   </svg>
 )
+export const ClipboardListIcon = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+    <path d="M12 11h4"></path>
+    <path d="M12 16h4"></path>
+    <path d="M8 11h.01"></path>
+    <path d="M8 16h.01"></path>
+  </svg>
+)
+
+export const ExclamationIcon = ({ className = "w-4 h-4" }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+  </svg>
+)

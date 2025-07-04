@@ -1,18 +1,12 @@
 import AdminMessagesView from "./AdminMessagesView"
 import InstaladorsList from "./InstaladorsList"
+import PedidosListView from "./PedidosListView"
 
 const DashboardContent = ({ activeSection, activeSubSection }) => {
   const renderContent = () => {
     if (activeSection === "pedidos") {
       if (activeSubSection === "Lista") {
-        return (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold mb-4">Detalles de Pedidos</h3>
-              <p className="text-gray-400">Vista detallada de pedidos - En desarrollo</p>
-            </div>
-          </div>
-        )
+        return <PedidosListView />
       } else if (activeSubSection === "Chat") {
         return <AdminMessagesView />
       }
