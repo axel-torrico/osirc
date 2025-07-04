@@ -2,7 +2,7 @@ import React from 'react';
 import { UserIcon, BotIcon, WrenchIcon } from "./Icons";
 
 function ChatMessages({ messages, loading }) {
-  // console.log('messages', messages);
+  console.log('messages', messages);
 
   const normalizeSender = (sender) => {
     if (sender === "installer") return "instalador";
