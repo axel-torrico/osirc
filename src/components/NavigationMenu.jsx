@@ -50,7 +50,7 @@ const NavigationMenu = ({ activeSection, activeSubSection, onSectionChange, onSu
   }
 
   return (
-    <div className="w-60 p-4 bg-gray-800 h-full overflow-hidden">
+    <div className="w-60 p-4 border-r-2 border-gray-900 bg-gray-800 h-full overflow-hidden">
       <div className="h-fullflex flex-col">
         <div className="mb-6 pb-4 border-b-1 border-gray-600">
           <h2 className="text-xl font-bold text-center">OSIRC</h2>
