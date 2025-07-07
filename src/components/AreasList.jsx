@@ -56,9 +56,9 @@ const AreasList = () => {
                       onClick={() => setSelectedArea(area.id)}
                       className={`border-b border-gray-700 hover:bg-gray-800 cursor-pointer transition-colors ${selectedArea === area.id ? "bg-gray-800" : ""}`}
                     >
-                      <td className="p-4 font-medium">{area.department}</td>
-                      <td className="p-4 text-gray-300">{area.state}</td>
-                      <td className="p-4 text-gray-300">
+                      <td className="px-3 py-4 font-medium">{area.department}</td>
+                      <td className="px-3 py-4 text-gray-300">{area.state}</td>
+                      <td className="px-3 py-4 text-gray-300">
                         {area.installer?.length > 0
                           ? area.installer.length + " instalador(es)"
                           : <span className="text-red-400 italic">Sin instaladores</span>}

@@ -158,20 +158,20 @@ const PedidosListView = () => {
                 <tbody>
                   {pedidosFiltrados.map((pedido) => (
                     <tr key={pedido.id} onClick={() => setSelectedPedido(pedido.id)} className={`border-b border-gray-700 hover:bg-gray-800 cursor-pointer transition-colors ${selectedPedido === pedido.id ? "bg-gray-800" : ""}`}>
-                      <td className="p-4 text-blue-400 font-medium">{pedido.id}</td>
-                      <td className="p-4 font-medium">{pedido.nombreCliente}</td>
-                      <td className="p-4 text-gray-300">
+                      <td className="px-3 py-4 text-blue-400 font-medium">{pedido.id}</td>
+                      <td className="px-3 py-4 font-medium">{pedido.nombreCliente}</td>
+                      <td className="px-3 py-4 text-gray-300">
                         {pedido.nombreInstalador ? pedido.nombreInstalador + " - " + pedido.orden : <span className="text-red-400 italic">Sin asignar</span>}
                       </td>
-                      <td className="p-4 text-gray-300">{pedido.telefono}</td>
-                      <td className="p-4 text-gray-300">{pedido.email}</td>
-                      <td className="p-4">
+                      <td className="px-3 py-4 text-gray-300">{pedido.telefono}</td>
+                      <td className="px-3 py-4 text-gray-300">{pedido.email}</td>
+                      <td className="px-3 py-4">
                         <span className="px-2 py-1 bg-blue-600 text-white rounded text-xs font-medium whitespace-nowrap max-w-[110px] inline-block overflow-hidden text-ellipsis">
                           {pedido.zona}
                         </span>
                       </td>
-                      <td className="p-4">{getUrgenciaBadge(pedido.urgencia)}</td>
-                      <td className="p-4 ">{getEstadoBadge(pedido.estado)}</td>
+                      <td className="px-3 py-4">{getUrgenciaBadge(pedido.urgencia)}</td>
+                      <td className="px-3 py-4">{getEstadoBadge(pedido.estado)}</td>
                     </tr>
                   ))}
                 </tbody>
