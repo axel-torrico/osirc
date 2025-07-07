@@ -21,3 +21,7 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #1d2836;
 }
+
+body {
+  font-family: "Wix Madefor Display", sans-serif;
+}

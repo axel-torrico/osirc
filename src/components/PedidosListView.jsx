@@ -1,16 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import {
-  UserIcon,
-  PhoneIcon,
-  MailIcon,
-  WrenchIcon,
-  MapPinIcon,
-  HashIcon,
-  ClipboardListIcon,
-  ExclamationIcon
-} from "./Icons"
 import useOrders from "../hooks/useOrders"
 
 const PedidosListView = () => {
@@ -20,6 +10,7 @@ const PedidosListView = () => {
   const [filterEstado, setFilterEstado] = useState("todos")
   const [filterZona, setFilterZona] = useState("todas")
   const [filterUrgencia, setFilterUrgencia] = useState("todas")
+  console.log("orders:", orders);
 
   const emergencyMap = {
     high: "alta",
@@ -154,31 +145,33 @@ const PedidosListView = () => {
               <table className="w-full">
                 <thead className="sticky top-0 bg-gray-800 border-b-2 border-gray-600">
                   <tr>
-                    <th className="text-left p-4"><HashIcon className="w-4 h-4 inline" /> N° Pedido</th>
-                    <th className="text-left p-4"><UserIcon className="w-4 h-4 inline" /> Cliente</th>
-                    <th className="text-left p-4"><WrenchIcon className="w-4 h-4 inline" /> Instalador</th>
-                    <th className="text-left p-4"><PhoneIcon className="w-4 h-4 inline" /> Teléfono</th>
-                    <th className="text-left p-4"><MailIcon className="w-4 h-4 inline" /> Email</th>
-                    <th className="text-left p-4"><MapPinIcon className="w-4 h-4 inline" /> Zona</th>
-                    <th className="text-left p-4"><ExclamationIcon className="w-4 h-4 inline" /> Urgencia</th>
-                    <th className="text-left p-4"><ClipboardListIcon className="w-4 h-4 inline" /> Estado</th>
+                    <th className="text-left p-4">N° Pedido</th>
+                    <th className="text-left p-4">Cliente</th>
+                    <th className="text-left p-4">Instalador</th>
+                    <th className="text-left p-4">Teléfono</th>
+                    <th className="text-left p-4">Email</th>
+                    <th className="text-left p-4">Zona</th>
+                    <th className="text-left p-4">Urgencia</th>
+                    <th className="text-left p-4">Estado</th>
                   </tr>
                 </thead>
                 <tbody>
                   {pedidosFiltrados.map((pedido) => (
                     <tr key={pedido.id} onClick={() => setSelectedPedido(pedido.id)} className={`border-b border-gray-700 hover:bg-gray-800 cursor-pointer transition-colors ${selectedPedido === pedido.id ? "bg-gray-800" : ""}`}>
-                      <td className="p-4 text-blue-400 font-medium">{pedido.id}</td>
-                      <td className="p-4 font-medium">{pedido.nombreCliente}</td>
-                      <td className="p-4 text-gray-300">{pedido.nombreInstalador || <span className="text-red-400 italic">Sin asignar</span>}</td>
-                      <td className="p-4 text-gray-300">{pedido.telefono}</td>
-                      <td className="p-4 text-gray-300">{pedido.email}</td>
-                      <td className="p-4">
+                      <td className="px-3 py-4 text-blue-400 font-medium">{pedido.id}</td>
+                      <td className="px-3 py-4 font-medium">{pedido.nombreCliente}</td>
+                      <td className="px-3 py-4 text-gray-300">
+                        {pedido.nombreInstalador ? pedido.nombreInstalador + " - " + pedido.orden : <span className="text-red-400 italic">Sin asignar</span>}
+                      </td>
+                      <td className="px-3 py-4 text-gray-300">{pedido.telefono}</td>
+                      <td className="px-3 py-4 text-gray-300">{pedido.email}</td>
+                      <td className="px-3 py-4">
                         <span className="px-2 py-1 bg-blue-600 text-white rounded text-xs font-medium whitespace-nowrap max-w-[110px] inline-block overflow-hidden text-ellipsis">
                           {pedido.zona}
                         </span>
                       </td>
-                      <td className="p-4">{getUrgenciaBadge(pedido.urgencia)}</td>
-                      <td className="p-4 ">{getEstadoBadge(pedido.estado)}</td>
+                      <td className="px-3 py-4">{getUrgenciaBadge(pedido.urgencia)}</td>
+                      <td className="px-3 py-4">{getEstadoBadge(pedido.estado)}</td>
                     </tr>
                   ))}
                 </tbody>
