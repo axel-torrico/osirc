@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { UserIcon, PhoneIcon, MailIcon, WrenchIcon, MapPinIcon, HashIcon } from "./Icons"
 import useInstallers from '../hooks/useInstallers';
 
 const InstaladorsList = () => {
@@ -57,13 +56,13 @@ const InstaladorsList = () => {
         <div className="p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <h1 className="text-2xl font-bold">Instaladores</h1>
           <div className="flex flex-col sm:flex-row gap-4">
-            {/* <input
+            <input
               type="text"
-              placeholder="Buscar por nombre o email..."
+              placeholder="Buscar por nombre o email"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400"
-            /> */}
+            />
             <select
               value={filterOficio}
               onChange={(e) => setFilterOficio(e.target.value)}
@@ -112,12 +111,12 @@ const InstaladorsList = () => {
               <table className="w-full h-full">
                 <thead className="sticky top-0 bg-gray-800 border-b-2 border-gray-600">
                   <tr>
-                    <th className="text-left p-4 font-semibold"><div className="flex items-center gap-2"><UserIcon className="w-4 h-4" />Nombre</div></th>
-                    <th className="text-left p-4 font-semibold"><div className="flex items-center gap-2"><PhoneIcon className="w-4 h-4" />Teléfono</div></th>
-                    <th className="text-left p-4 font-semibold"><div className="flex items-center gap-2"><MailIcon className="w-4 h-4" />Email</div></th>
-                    <th className="text-left p-4 font-semibold"><div className="flex items-center gap-2"><WrenchIcon className="w-4 h-4" />Oficio</div></th>
-                    <th className="text-left p-4 font-semibold"><div className="flex items-center gap-2"><MapPinIcon className="w-4 h-4" />Zona</div></th>
-                    <th className="text-left p-4 font-semibold"><div className="flex items-center gap-2"><HashIcon className="w-4 h-4" />Total de pedidos</div></th>
+                    <th className="text-left p-4 font-semibold">Nombre</th>
+                    <th className="text-left p-4 font-semibold">Teléfono</th>
+                    <th className="text-left p-4 font-semibold">Email</th>
+                    <th className="text-left p-4 font-semibold">Oficio</th>
+                    <th className="text-left p-4 font-semibold">Zona</th>
+                    <th className="text-left p-4 font-semibold">Total de pedidos</th>
                     <th className="text-left p-4 font-semibold">Estados</th>
                   </tr>
                 </thead>

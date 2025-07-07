@@ -30,16 +30,21 @@ const NavigationMenu = ({ activeSection, activeSubSection, onSectionChange, onSu
 
   const handleMainItemClick = (itemId, hasDropdown = false) => {
     if (hasDropdown) {
-      // Para items con dropdown, solo expandir/colapsar
-      if (activeSection === itemId) {
-        onSectionChange("dashboard")
-        onSubSectionChange(null)
+      if (itemId === "pedidos") {
+        onSectionChange("pedidos")
+        onSubSectionChange("Lista")
       } else {
-        onSectionChange(itemId)
-        onSubSectionChange(null)
+        // Para otros con dropdown (si los hubiera)
+        if (activeSection === itemId) {
+          onSectionChange("pedidos")
+          onSubSectionChange("Lista")
+        } else {
+          onSectionChange(itemId)
+          onSubSectionChange(null)
+        }
       }
     } else {
-      // Para items sin dropdown, navegar directamente
+      // Para items sin dropdown
       onSectionChange(itemId)
       onSubSectionChange(null)
     }

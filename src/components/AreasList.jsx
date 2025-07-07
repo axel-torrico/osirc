@@ -1,11 +1,6 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import {
-  MapPinIcon,
-  UserIcon,
-  WrenchIcon
-} from "./Icons"
 import useAreas from "../hooks/useAreas"
 
 const AreasList = () => {
@@ -31,7 +26,7 @@ const AreasList = () => {
           <h1 className="text-2xl font-bold">Zonas</h1>
           <input
             type="text"
-            placeholder="Buscar por departamento, provincia o slug..."
+            placeholder="Buscar zona"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400"
@@ -49,9 +44,9 @@ const AreasList = () => {
               <table className="w-full">
                 <thead className="sticky top-0 bg-gray-800 border-b-2 border-gray-600">
                   <tr>
-                    <th className="text-left p-4"><UserIcon className="w-4 h-4 inline" /> Departamento</th>
-                    <th className="text-left p-4"><MapPinIcon className="w-4 h-4 inline" /> Provincia</th>
-                    <th className="text-left p-4"><WrenchIcon className="w-4 h-4 inline" /> Instaladores</th>
+                    <th className="text-left p-4">Departamento</th>
+                    <th className="text-left p-4">Provincia</th>
+                    <th className="text-left p-4">Instaladores</th>
                   </tr>
                 </thead>
                 <tbody>
