@@ -15,7 +15,6 @@ import useOrders from "../hooks/useOrders"
 
 const PedidosListView = () => {
   const { orders, loadingOrders } = useOrders()
-
   const [selectedPedido, setSelectedPedido] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterEstado, setFilterEstado] = useState("todos")
