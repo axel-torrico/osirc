@@ -1,8 +1,9 @@
 import AdminMessagesView from "./AdminMessagesView";
 import InstaladorsList from "./InstaladorsList";
 import PedidosListView from "./PedidosListView";
-import useOrders from "../hooks/useOrders";
+import AreasList from "./AreasList";
 import StatCard from "./StatCard";
+import useOrders from "../hooks/useOrders";
 import useInstallers from "../hooks/useInstallers";
 import useMessages from "../hooks/useMessages";
 import useAreas from "../hooks/useAreas";
@@ -40,14 +41,7 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
     }
 
     if (activeSection === "zonas") {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mb-4">Zonas</h3>
-            <p className="text-gray-400">Gestión de zonas - En desarrollo</p>
-          </div>
-        </div>
-      );
+      return <AreasList />
     }
 
     return (

@@ -23,7 +23,7 @@ const useAreas = () => {
             id: record.id,
             ...record.fields,
           }))
-          .sort((a, b) => b.ID - a.ID);
+          .sort((a, b) => a.ID - b.ID);
 
         setAreas(formatted);
       } catch (err) {
