@@ -18,7 +18,7 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
   const completedOrders = orders?.filter(order => order.status === "Completed") || [];
   const todaysOrders = orders?.filter(order => {
     const today = new Date();
-    const orderDate = new Date(order.createdAt);
+    const orderDate = new Date(order.date);
     return (
       orderDate.getDate() === today.getDate() &&
       orderDate.getMonth() === today.getMonth() &&
