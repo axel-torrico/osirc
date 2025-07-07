@@ -1,122 +1,67 @@
-
 "use client"
 
-import { useState } from "react"
-import { UserIcon, PhoneIcon, MailIcon, WrenchIcon, MapPinIcon, HashIcon, ClipboardListIcon, ExclamationIcon } from "./Icons"
-
-// Datos de ejemplo de instaladores
-const mockPedidos = [{
-  id: "1",
-  orden: "ORD-2024-001",
-  nombreCliente: "Juan Pérez",
-  nombreInstalador: "Carlos Rodríguez",
-  telefono: "+54 11 1234-5678",
-  email: "juan.perez@email.com",
-  zona: "Palermo",
-  urgencia: "alta",
-  estado: "recibidos",
-  fechaCreacion: "2024-01-15",
-},
-{
-  id: "2",
-  orden: "ORD-2024-002",
-  nombreCliente: "María González",
-  nombreInstalador: "Ana García",
-  telefono: "+54 11 2345-6789",
-  email: "maria.gonzalez@email.com",
-  zona: "Villa Crespo",
-  urgencia: "media",
-  estado: "en asignacion",
-  fechaCreacion: "2024-01-16",
-},
-{
-  id: "3",
-  orden: "ORD-2024-003",
-  nombreCliente: "Roberto Silva",
-  nombreInstalador: "Miguel Torres",
-  telefono: "+54 11 3456-7890",
-  email: "roberto.silva@email.com",
-  zona: "Belgrano",
-  urgencia: "baja",
-  estado: "asignados",
-  fechaCreacion: "2024-01-17",
-},
-{
-  id: "4",
-  orden: "ORD-2024-004",
-  nombreCliente: "Laura Martínez",
-  nombreInstalador: "",
-  telefono: "+54 11 4567-8901",
-  email: "laura.martinez@email.com",
-  zona: "Recoleta",
-  urgencia: "alta",
-  estado: "no asignados",
-  fechaCreacion: "2024-01-18",
-},
-{
-  id: "5",
-  orden: "ORD-2024-005",
-  nombreCliente: "Diego Fernández",
-  nombreInstalador: "Roberto Silva",
-  telefono: "+54 11 5678-9012",
-  email: "diego.fernandez@email.com",
-  zona: "San Telmo",
-  urgencia: "alta",
-  estado: "asignados",
-  fechaCreacion: "2024-01-19",
-},
-{
-  id: "6",
-  orden: "ORD-2024-006",
-  nombreCliente: "Carmen Ruiz",
-  nombreInstalador: "",
-  telefono: "+54 11 6789-0123",
-  email: "carmen.ruiz@email.com",
-  zona: "Caballito",
-  urgencia: "media",
-  estado: "no asignados",
-  fechaCreacion: "2024-01-20",
-},
-{
-  id: "7",
-  orden: "ORD-2024-007",
-  nombreCliente: "Andrés López",
-  nombreInstalador: "María López",
-  telefono: "+54 11 7890-1234",
-  email: "andres.lopez@email.com",
-  zona: "Flores",
-  urgencia: "baja",
-  estado: "recibidos",
-  fechaCreacion: "2024-01-21",
-},
-{
-  id: "8",
-  orden: "ORD-2024-008",
-  nombreCliente: "Sofía Torres",
-  nombreInstalador: "Diego Fernández",
-  telefono: "+54 11 8901-2345",
-  email: "sofia.torres@email.com",
-  zona: "Palermo",
-  urgencia: "alta",
-  estado: "en asignacion",
-  fechaCreacion: "2024-01-22",
-},
-]
+import { useState, useMemo } from "react"
+import {
+  UserIcon,
+  PhoneIcon,
+  MailIcon,
+  WrenchIcon,
+  MapPinIcon,
+  HashIcon,
+  ClipboardListIcon,
+  ExclamationIcon
+} from "./Icons"
+import useOrders from "../hooks/useOrders"
 
 const PedidosListView = () => {
+  const { orders, loadingOrders } = useOrders()
+
   const [selectedPedido, setSelectedPedido] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterEstado, setFilterEstado] = useState("todos")
   const [filterZona, setFilterZona] = useState("todas")
   const [filterUrgencia, setFilterUrgencia] = useState("todas")
 
-  // Filtros únicos
-  const estados = ["recibidos", "en asignacion", "asignados", "no asignados"]
-  const zonas = [...new Set(mockPedidos.map((pedido) => pedido.zona))]
-  const urgencias = ["baja", "media", "alta"]
+  const emergencyMap = {
+    high: "alta",
+    medium: "media",
+    low: "baja"
+  }
 
-  // Filtrar pedidos
-  const pedidosFiltrados = mockPedidos.filter((pedido) => {
+  const statusMap = {
+    received: "recibido",
+    assigned: "asignado",
+    unassigned: "no asignado",
+    "on assignment": "en asignacion",
+    completed: "finalizado"
+  }
+
+  const mappedOrders = useMemo(() => {
+    if (!orders || !Array.isArray(orders)) return []
+
+    return orders.map((order) => {
+      const rawUrgencia = order.emergency?.toLowerCase()
+      const rawEstado = order.status?.toLowerCase().trim()
+
+      return {
+        id: order.id_client,
+        orden: order.order || "",
+        nombreCliente: order.name || "",
+        nombreInstalador: order["full_name (from installer)"]?.[0] || "",
+        telefono: order.client_phone || "",
+        email: order.client_email || "",
+        zona: order.client_area || "",
+        urgencia: emergencyMap[rawUrgencia] || "",
+        estado: statusMap[rawEstado] || ""
+      }
+    })
+  }, [orders])
+
+  const zonas = [...new Set(mappedOrders.map((pedido) => pedido.zona))]
+  const urgencias = ["baja", "media", "alta"]
+  const estados = ["recibido", "en asignacion", "asignado", "no asignado", "finalizado"]
+
+  const pedidosFiltrados = mappedOrders.filter((pedido) => {
     const matchesSearch =
       pedido.nombreCliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pedido.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -129,33 +74,38 @@ const PedidosListView = () => {
 
     return matchesSearch && matchesEstado && matchesZona && matchesUrgencia
   })
+
   const getEstadoBadge = (estado) => {
-    const baseClasses = "px-2 py-1 rounded text-xs font-medium"
+    const base = "px-2 py-1 rounded text-xs font-medium whitespace-nowrap max-w-[110px] overflow-hidden text-ellipsis"
+
     switch (estado) {
-      case "recibidos":
-        return <span className={`${baseClasses} bg-blue-500 text-white`}>Recibidos</span>
+      case "recibido":
+        return <span className={`${base} bg-fuchsia-600  text-white`}>recibido</span>
       case "en asignacion":
-        return <span className={`${baseClasses} bg-yellow-500 text-white`}>En Asignación</span>
-      case "asignados":
-        return <span className={`${baseClasses} bg-green-500 text-white`}>Asignados</span>
-      case "no asignados":
-        return <span className={`${baseClasses} bg-red-500 text-white`}>No Asignados</span>
+        return <span className={`${base} bg-blue-600 text-white`}>en asignación</span>
+      case "asignado":
+        return <span className={`${base} bg-green-600 text-white`}>asignado</span>
+      case "no asignado":
+        return <span className={`${base} bg-red-500 text-white`}>no asignado</span>
+      case "finalizado":
+        return <span className={`${base} bg-gray-600 text-white`}>finalizado</span>
       default:
-        return <span className={`${baseClasses} bg-gray-500 text-white`}>{estado}</span>
+        return <span className={`${base} bg-gray-600 text-white`}>{estado}</span>
     }
   }
 
   const getUrgenciaBadge = (urgencia) => {
-    const baseClasses = "px-2 py-1 rounded text-xs font-medium"
+    const base = "px-2 py-1 rounded text-xs font-medium whitespace-nowrap max-w-[110px] overflow-hidden text-ellipsis"
+
     switch (urgencia) {
       case "baja":
-        return <span className={`${baseClasses} bg-gray-500 text-white`}>Baja</span>
+        return <span className={`${base} bg-gray-500 text-white`}>baja</span>
       case "media":
-        return <span className={`${baseClasses} bg-orange-500 text-white`}>Media</span>
+        return <span className={`${base} bg-orange-500 text-white`}>media</span>
       case "alta":
-        return <span className={`${baseClasses} bg-red-500 text-white`}>Alta</span>
+        return <span className={`${base} bg-red-500 text-white`}>alta</span>
       default:
-        return <span className={`${baseClasses} bg-gray-500 text-white`}>{urgencia}</span>
+        return <span className={`${base} bg-gray-500 text-white`}>{urgencia}</span>
     }
   }
 
@@ -172,158 +122,80 @@ const PedidosListView = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400"
             />
-            <select
-              value={filterEstado}
-              onChange={(e) => setFilterEstado(e.target.value)}
-              className="pl-3 pr-10 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400 appearance-none cursor-pointer"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                backgroundPosition: "right 12px center",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "16px",
-              }}
-            >
+            <select value={filterEstado} onChange={(e) => setFilterEstado(e.target.value)} className="pl-3 pr-10 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400">
               <option value="todos">Todos los estados</option>
               {estados.map((estado) => (
-                <option key={estado} value={estado}>
-                  {estado.charAt(0).toUpperCase() + estado.slice(1)}
-                </option>
+                <option key={estado} value={estado}>{estado.charAt(0).toUpperCase() + estado.slice(1)}</option>
               ))}
             </select>
-            <select
-              value={filterZona}
-              onChange={(e) => setFilterZona(e.target.value)}
-              className="pl-3 pr-10 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400 appearance-none cursor-pointer"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                backgroundPosition: "right 12px center",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "16px",
-              }}
-            >
+            <select value={filterZona} onChange={(e) => setFilterZona(e.target.value)} className="pl-3 pr-10 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400">
               <option value="todas">Todas las zonas</option>
               {zonas.map((zona) => (
-                <option key={zona} value={zona}>
-                  {zona}
-                </option>
+                <option key={zona} value={zona}>{zona}</option>
               ))}
             </select>
-            <select
-              value={filterUrgencia}
-              onChange={(e) => setFilterUrgencia(e.target.value)}
-              className="pl-3 pr-10 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400 appearance-none cursor-pointer"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' strokeLinecap='round' strokeLinejoin='round' strokeWidth='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                backgroundPosition: "right 12px center",
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "16px",
-              }}
-            >
+            <select value={filterUrgencia} onChange={(e) => setFilterUrgencia(e.target.value)} className="pl-3 pr-10 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400">
               <option value="todas">Todas las urgencias</option>
               {urgencias.map((urgencia) => (
-                <option key={urgencia} value={urgencia}>
-                  {urgencia.charAt(0).toUpperCase() + urgencia.slice(1)}
-                </option>
+                <option key={urgencia} value={urgencia}>{urgencia.charAt(0).toUpperCase() + urgencia.slice(1)}</option>
               ))}
             </select>
           </div>
         </div>
 
-        {/* Tabla de pedidos */}
+        {/* Tabla */}
         <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-y-auto scrollbar-custom">
-            <table className="w-full">
-              <thead className="sticky top-0 bg-gray-800 border-b-2 border-gray-600">
-                <tr>
-                  <th className="text-left p-4 font-semibold">
-                    <div className="flex items-center gap-2">
-                      <HashIcon className="w-4 h-4" />
-                      Orden
-                    </div>
-                  </th>
-                  <th className="text-left p-4 font-semibold">
-                    <div className="flex items-center gap-2">
-                      <UserIcon className="w-4 h-4" />
-                      Cliente
-                    </div>
-                  </th>
-                  <th className="text-left p-4 font-semibold">
-                    <div className="flex items-center gap-2">
-                      <WrenchIcon className="w-4 h-4" />
-                      Instalador
-                    </div>
-                  </th>
-                  <th className="text-left p-4 font-semibold">
-                    <div className="flex items-center gap-2">
-                      <PhoneIcon className="w-4 h-4" />
-                      Teléfono
-                    </div>
-                  </th>
-                  <th className="text-left p-4 font-semibold">
-                    <div className="flex items-center gap-2">
-                      <MailIcon className="w-4 h-4" />
-                      Email
-                    </div>
-                  </th>
-                  <th className="text-left p-4 font-semibold">
-                    <div className="flex items-center gap-2">
-                      <MapPinIcon className="w-4 h-4" />
-                      Zona
-                    </div>
-                  </th>
-                  <th className="text-left p-4 font-semibold">
-                    <div className="flex items-center gap-2">
-                      <ExclamationIcon className="w-4 h-4" />
-                      Urgencia
-                    </div>
-                  </th>
-                  <th className="text-left p-4 font-semibold">
-                    <div className="flex items-center gap-2">
-                      <ClipboardListIcon className="w-4 h-4" />
-                      Estado
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {pedidosFiltrados.map((pedido) => (
-                  <tr
-                    key={pedido.id}
-                    onClick={() => setSelectedPedido(pedido.id)}
-                    className={`border-b border-gray-700 hover:bg-gray-800 cursor-pointer transition-colors ${selectedPedido === pedido.id ? "bg-gray-800" : ""
-                      }`}
-                  >
-                    <td className="p-4">
-                      <div className="font-medium text-blue-400">{pedido.orden}</div>
-                    </td>
-                    <td className="p-4">
-                      <div className="font-medium">{pedido.nombreCliente}</div>
-                    </td>
-                    <td className="p-4 text-gray-300">
-                      {pedido.nombreInstalador || <span className="text-red-400 italic">Sin asignar</span>}
-                    </td>
-                    <td className="p-4 text-gray-300">{pedido.telefono}</td>
-                    <td className="p-4 text-gray-300">{pedido.email}</td>
-                    <td className="p-4">
-                      <span className="px-2 py-1 bg-blue-600 text-white rounded text-sm">{pedido.zona}</span>
-                    </td>
-                    <td className="p-4">{getUrgenciaBadge(pedido.urgencia)}</td>
-                    <td className="p-4">{getEstadoBadge(pedido.estado)}</td>
+            {loadingOrders ? (
+              <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                <p>Cargando pedidos...</p>
+                <div className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin mt-2"></div>
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead className="sticky top-0 bg-gray-800 border-b-2 border-gray-600">
+                  <tr>
+                    <th className="text-left p-4"><HashIcon className="w-4 h-4 inline" /> N° Pedido</th>
+                    <th className="text-left p-4"><UserIcon className="w-4 h-4 inline" /> Cliente</th>
+                    <th className="text-left p-4"><WrenchIcon className="w-4 h-4 inline" /> Instalador</th>
+                    <th className="text-left p-4"><PhoneIcon className="w-4 h-4 inline" /> Teléfono</th>
+                    <th className="text-left p-4"><MailIcon className="w-4 h-4 inline" /> Email</th>
+                    <th className="text-left p-4"><MapPinIcon className="w-4 h-4 inline" /> Zona</th>
+                    <th className="text-left p-4"><ExclamationIcon className="w-4 h-4 inline" /> Urgencia</th>
+                    <th className="text-left p-4"><ClipboardListIcon className="w-4 h-4 inline" /> Estado</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {pedidosFiltrados.map((pedido) => (
+                    <tr key={pedido.id} onClick={() => setSelectedPedido(pedido.id)} className={`border-b border-gray-700 hover:bg-gray-800 cursor-pointer transition-colors ${selectedPedido === pedido.id ? "bg-gray-800" : ""}`}>
+                      <td className="p-4 text-blue-400 font-medium">{pedido.id}</td>
+                      <td className="p-4 font-medium">{pedido.nombreCliente}</td>
+                      <td className="p-4 text-gray-300">{pedido.nombreInstalador || <span className="text-red-400 italic">Sin asignar</span>}</td>
+                      <td className="p-4 text-gray-300">{pedido.telefono}</td>
+                      <td className="p-4 text-gray-300">{pedido.email}</td>
+                      <td className="p-4">
+                        <span className="px-2 py-1 bg-blue-600 text-white rounded text-xs font-medium whitespace-nowrap max-w-[110px] inline-block overflow-hidden text-ellipsis">
+                          {pedido.zona}
+                        </span>
+                      </td>
+                      <td className="p-4">{getUrgenciaBadge(pedido.urgencia)}</td>
+                      <td className="p-4 ">{getEstadoBadge(pedido.estado)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
 
-        {/* Footer con estadísticas */}
-        <div className="border-t-2 border-gray-600 p-4 bg-gray-800 flex items-center justify-between text-sm text-gray-400 mt-4">
+        <div className="border-t-2 border-gray-600 p-4 bg-gray-800 flex justify-between text-sm text-gray-400 mt-4">
           <span>Total pedidos: {pedidosFiltrados.length}</span>
           <div className="flex gap-4">
-            <span>Recibidos: {pedidosFiltrados.filter((p) => p.estado === "recibidos").length}</span>
+            <span>Recibidos: {pedidosFiltrados.filter((p) => p.estado === "recibido").length}</span>
             <span>En Asignación: {pedidosFiltrados.filter((p) => p.estado === "en asignacion").length}</span>
-            <span>Asignados: {pedidosFiltrados.filter((p) => p.estado === "asignados").length}</span>
-            <span>No Asignados: {pedidosFiltrados.filter((p) => p.estado === "no asignados").length}</span>
+            <span>Asignados: {pedidosFiltrados.filter((p) => p.estado === "asignado").length}</span>
+            <span>No Asignados: {pedidosFiltrados.filter((p) => p.estado === "no asignado").length}</span>
+            <span>Finalizados: {pedidosFiltrados.filter((p) => p.estado === "finalizado").length}</span>
           </div>
         </div>
       </div>
