@@ -28,7 +28,7 @@ const AreasList = () => {
     <div className="h-full bg-gray-900 text-white">
       <div className="h-full flex flex-col">
         <div className="p-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Áreas</h1>
+          <h1 className="text-2xl font-bold">Zonas</h1>
           <input
             type="text"
             placeholder="Buscar por departamento, provincia o slug..."
