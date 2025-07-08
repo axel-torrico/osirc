@@ -27,11 +27,11 @@ const AreasList = () => {
   return (
     <div className="h-full bg-gray-900 text-white">
       <div className="h-full flex flex-col">
-        <div className="p-4 flex items-center justify-between">
+        <div className="p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <h1 className="text-2xl font-bold">Zonas</h1>
           <input
             type="text"
-            placeholder="Buscar por departamento, provincia o slug..."
+            placeholder="Buscar por departamento, provincia ..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400"
@@ -41,17 +41,26 @@ const AreasList = () => {
         <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-y-auto scrollbar-custom">
             {loadingAreas ? (
-              <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
-                <p>Cargando áreas...</p>
-                <div className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin mt-2"></div>
+              <div className="w-full h-full space-y-4 flex flex-col items-center justify-center text-gray-400">
+                <p className="text-center text-gray-400" >Cargando áreas...</p>
+                <div className="flex justify-center">
+                  <div className="w-7 h-7 border-2 border-white 
+border-t-transparent rounded-full animate-spin 
+mt-2"></div>
+                </div>
+
               </div>
             ) : (
-              <table className="w-full">
+              <table className="w-full h-full">
                 <thead className="sticky top-0 bg-gray-800 border-b-2 border-gray-600">
                   <tr>
-                    <th className="text-left p-4"><UserIcon className="w-4 h-4 inline" /> Departamento</th>
-                    <th className="text-left p-4"><MapPinIcon className="w-4 h-4 inline" /> Provincia</th>
-                    <th className="text-left p-4"><WrenchIcon className="w-4 h-4 inline" /> Instaladores</th>
+                    <th className="text-left p-4"><div className="flex items-center gap-2">  <UserIcon className="w-4 h-4 " />Departamento</div></th>
+
+                    <th className="text-left p-4"><div className="flex items-center gap-2">
+                      <MapPinIcon className="w-4 h-4" /> Provincia</div>
+                    </th>
+                    <th className="text-left p-4"><div className="flex items-center gap-2">  <WrenchIcon className="w-4 h-4 " />         Instaladores</div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
