@@ -18,7 +18,7 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
   const completedOrders = orders?.filter(order => order.status === "Completed") || [];
   const todaysOrders = orders?.filter(order => {
     const today = new Date();
-    const orderDate = new Date(order.createdAt);
+    const orderDate = new Date(order.date);
     return (
       orderDate.getDate() === today.getDate() &&
       orderDate.getMonth() === today.getMonth() &&
@@ -59,27 +59,31 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
 
         <div className="border-2 border-gray-600 rounded-xl p-6 hover:border-gray-500 transition-colors">
           <h3 className="text-xl font-semibold mb-4">Actividad Reciente</h3>
-          <div className="space-y-3 max-h-[250px] overflow-y-auto pr-2">
+          <div className="space-y-3 max-h-[250px] overflow-y-auto">
             {loadingMessages ? (
               <p className="text-gray-400">Cargando mensajes...</p>
-            ) : messages?.slice(-5).reverse().map((msg) => (
-              <div key={msg.id} className="flex justify-between items-center">
-                <span className="text-sm truncate max-w-[70%]">
-                  {msg.sender === "client" && "Mensaje de cliente"}
-                  {msg.sender === "installer" && "Mensaje de instalador"}
-                  {msg.sender === "bot" && "Mensaje de bot"}
-                  {" - "}{msg["name (from order)"]?.[0]}
-                </span>
-                <span className="text-xs text-gray-400">
-                  {new Date(msg.timestamp).toLocaleString("es-AR", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour12: false,
-                  })}hs
-                </span>
+            ) : messages?.slice(-4).reverse().map((msg) => (
+              <div key={msg.id} className="flex justify-between">
+                <div className="max-w-[35%] flex flex-col gap-1">
+                  <span className=" ext-sm truncate">
+                    {msg.sender === "client" && "Mensaje de cliente"}
+                    {msg.sender === "installer" && "Mensaje de instalador"}
+                    {msg.sender === "bot" && "Mensaje de bot"}
+                    {" - "}{msg["name (from order)"]?.[0]}
+                  </span>
+
+                  <span className="text-xs text-gray-400">
+                    {new Date(msg.timestamp).toLocaleString("es-AR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour12: false,
+                    })}hs
+                  </span>
+                </div>
+                <span className="w-full max-w-[65%] text-start truncate">{msg.message}</span>
               </div>
             ))}
           </div>
