@@ -21,17 +21,17 @@ const AreasList = () => {
 
   return (
     <div className="h-full bg-gray-900 text-white">
-      <div className="h-full flex flex-col">
-        <div className="p-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Zonas</h1>
-          <input
-            type="text"
-            placeholder="Buscar zona"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400"
-          />
-        </div>
+      <div className="h-full flex flex-col"><div className="p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <h1 className="text-2xl font-bold">Zonas</h1>
+        <input
+          type="text"
+          placeholder="Buscar zona"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none 
+focus:border-blue-400"
+        />
+      </div>
 
         <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-y-auto scrollbar-custom">
