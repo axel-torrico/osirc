@@ -129,9 +129,9 @@ const InstaladorsList = () => {
                       className={`border-b border-gray-700 hover:bg-gray-800 cursor-pointer transition-colors ${selectedInstalador === instalador.id ? "bg-gray-800" : ""}`}
                     >
                       <td className="px-3 py-4"><div className="font-medium">{instalador.nombre}</div></td>
-                      <td className="px-3 py-4 text-gray-300">{instalador.telefono}</td>
+                      <td className="px-3 py-4 text-[15px] text-gray-300">{instalador.telefono}</td>
                       <td className="px-3 py-4 text-gray-300">{instalador.email}</td>
-                      <td className="px-3 py-4"><span className="px-2 py-1 bg-blue-600 text-white rounded text-sm whitespace-normal break-words max-w-[125px] inline-block">{instalador.oficio}</span></td>
+                      <td className="px-3 py-4"><span className="px-2 py-1 bg-indigo-600 text-white rounded text-sm whitespace-normal break-words max-w-[125px] inline-block">{instalador.oficio}</span></td>
                       <td className="px-3 py-4 text-gray-300">{instalador.zona}</td>
                       <td className="px-3 py-4 text-center"><span className="text-lg font-bold text-blue-400">{instalador.cantidadPedidos}</span></td>
                       <td className="px-3 py-4">{getEstadoBadge(instalador.estado)}</td>

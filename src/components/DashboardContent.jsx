@@ -1,6 +1,7 @@
 import AdminMessagesView from "./AdminMessagesView";
 import InstaladorsList from "./InstaladorsList";
 import PedidosListView from "./PedidosListView";
+import PendingOrdersTable from "./PendingOrdersTable";
 import AreasList from "./AreasList";
 import StatCard from "./StatCard";
 import useOrders from "../hooks/useOrders";
@@ -16,6 +17,15 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
 
   const activeOrders = orders?.filter(order => order.status !== "Completed") || [];
   const completedOrders = orders?.filter(order => order.status === "Completed") || [];
+  const pendingOrders = orders?.filter((order) => {
+    const status = order.status?.toLowerCase().trim()
+    const fechaPedido = new Date(order.date)
+    const ahora = new Date()
+    const diferenciaHoras = (ahora - fechaPedido) / (1000 * 60 * 60)
+
+    return ["received", "unassigned"].includes(status) && diferenciaHoras > 24
+  }) || []
+
   const todaysOrders = orders?.filter(order => {
     const today = new Date();
     const orderDate = new Date(order.date);
@@ -28,12 +38,12 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
 
   const availableInstallers = installers?.filter(i => i.status?.trim() === "Available") || [];
   const uniqueAreas = Array.from(new Set(areas?.map(a => a.department)));
-  const coveragePercentage = areas?.length ? Math.round((uniqueAreas.length / areas.length) * 100) : 0;
 
   const renderContent = () => {
     if (activeSection === "pedidos") {
       if (activeSubSection === "Lista") return <PedidosListView />;
       if (activeSubSection === "Chat") return <AdminMessagesView />;
+      if (activeSubSection === "En espera") return <PendingOrdersTable />;
     }
 
     if (activeSection === "instaladores") {
@@ -53,8 +63,8 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
           <StatCard title="Instaladores" value={loadingInstallers ? "..." : availableInstallers.length} color="text-green-400" subtitle="Instaladores disponibles" />
           <StatCard title="Zonas Cubiertas" value={loadingAreas ? "..." : uniqueAreas.length} color="text-yellow-400" subtitle="Zonas de servicio" />
           <StatCard title="Pedidos Hoy" value={loadingOrders ? "..." : todaysOrders.length} color="text-purple-400" subtitle="Ingresados hoy" />
-          <StatCard title="Pedidos Completados" value={loadingOrders ? "..." : completedOrders.length} color="text-gray-200" subtitle="Histórico total" />
-          <StatCard title="Cobertura" value={loadingAreas ? "..." : `${coveragePercentage}%`} color="text-cyan-400" subtitle="Zonas activas / posibles" />
+          <StatCard title="Pedidos en espera" value={loadingOrders ? "..." : pendingOrders.length} color="text-red-500" subtitle="Recibidos hace más de 24hs" />
+          <StatCard title="Pedidos Completados" value={loadingOrders ? "..." : completedOrders.length} color="text-cyan-400" subtitle="Histórico total" />
         </div>
 
         <div className="border-2 border-gray-600 rounded-xl p-6 hover:border-gray-500 transition-colors">

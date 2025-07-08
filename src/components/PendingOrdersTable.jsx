@@ -3,13 +3,14 @@
 import { useState, useMemo } from "react"
 import useOrders from "../hooks/useOrders"
 
-const PedidosListView = () => {
+const PendingOrdersTable = () => {
   const { orders, loadingOrders } = useOrders()
-  const [selectedPedido, setSelectedPedido] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterEstado, setFilterEstado] = useState("todos")
   const [filterZona, setFilterZona] = useState("todas")
   const [filterUrgencia, setFilterUrgencia] = useState("todas")
+  console.log("Orders:", orders);
+
 
   const emergencyMap = {
     high: "alta",
@@ -19,37 +20,44 @@ const PedidosListView = () => {
 
   const statusMap = {
     received: "recibido",
-    assigned: "asignado",
-    unassigned: "no asignado",
-    "on assignment": "en asignacion",
-    completed: "finalizado"
+    unassigned: "no asignado"
   }
 
   const mappedOrders = useMemo(() => {
     if (!orders || !Array.isArray(orders)) return []
 
-    return orders.map((order) => {
-      const rawUrgencia = order.emergency?.toLowerCase()
-      const rawEstado = order.status?.toLowerCase().trim()
+    const ahora = new Date()
 
-      return {
-        id: order.id_client,
-        orden: order.order || "",
-        nombreCliente: order.name || "",
-        nombreInstalador: order["full_name (from installer)"]?.[0] || "",
-        telefono: order.client_phone || "",
-        email: order.client_email || "",
-        zona: order.client_area || "",
-        urgencia: emergencyMap[rawUrgencia] || "",
-        estado: statusMap[rawEstado] || "",
-        fecha: order.date || ""
-      }
-    })
+    return orders
+      .filter((order) => {
+        const status = order.status?.toLowerCase().trim()
+        const fechaPedido = new Date(order.date)
+        const diferenciaHoras = (ahora - fechaPedido) / (1000 * 60 * 60)
+        return ["received", "unassigned"].includes(status) && diferenciaHoras > 24
+      })
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .map((order) => {
+        const rawUrgencia = order.emergency?.toLowerCase()
+        const rawEstado = order.status?.toLowerCase().trim()
+
+        return {
+          id: order.id_client,
+          orden: order.order || "",
+          nombreCliente: order.name || "",
+          nombreInstalador: order["full_name (from installer)"]?.[0] || "",
+          telefono: order.client_phone || "",
+          email: order.client_email || "",
+          zona: order.client_area || "",
+          urgencia: emergencyMap[rawUrgencia] || "",
+          estado: statusMap[rawEstado] || "",
+          fecha: order.date || ""
+        }
+      })
   }, [orders])
 
   const zonas = [...new Set(mappedOrders.map((pedido) => pedido.zona))]
   const urgencias = ["baja", "media", "alta"]
-  const estados = ["recibido", "en asignacion", "asignado", "no asignado", "finalizado"]
+  const estados = ["recibido", "no asignado",]
 
   const pedidosFiltrados = mappedOrders.filter((pedido) => {
     const matchesSearch =
@@ -64,6 +72,21 @@ const PedidosListView = () => {
 
     return matchesSearch && matchesEstado && matchesZona && matchesUrgencia
   })
+
+  const getUrgenciaBadge = (urgencia) => {
+    const base = "px-2 py-1 rounded text-xs font-medium whitespace-nowrap max-w-[110px] overflow-hidden text-ellipsis"
+
+    switch (urgencia) {
+      case "baja":
+        return <span className={`${base} bg-gray-500 text-white`}>baja</span>
+      case "media":
+        return <span className={`${base} bg-orange-500 text-white`}>media</span>
+      case "alta":
+        return <span className={`${base} bg-red-500 text-white`}>alta</span>
+      default:
+        return <span className={`${base} bg-gray-500 text-white`}>{urgencia}</span>
+    }
+  }
 
   const getEstadoBadge = (estado) => {
     const base = "px-2 py-1 rounded text-xs font-medium whitespace-nowrap max-w-[110px] overflow-hidden text-ellipsis"
@@ -84,21 +107,6 @@ const PedidosListView = () => {
     }
   }
 
-  const getUrgenciaBadge = (urgencia) => {
-    const base = "px-2 py-1 rounded text-xs font-medium whitespace-nowrap max-w-[110px] overflow-hidden text-ellipsis"
-
-    switch (urgencia) {
-      case "baja":
-        return <span className={`${base} bg-gray-500 text-white`}>baja</span>
-      case "media":
-        return <span className={`${base} bg-orange-500 text-white`}>media</span>
-      case "alta":
-        return <span className={`${base} bg-red-500 text-white`}>alta</span>
-      default:
-        return <span className={`${base} bg-gray-500 text-white`}>{urgencia}</span>
-    }
-  }
-
   const formatFecha = (isoDate) => {
     if (!isoDate) return ""
     const fecha = new Date(isoDate)
@@ -112,11 +120,17 @@ const PedidosListView = () => {
     })
   }
 
+  const handleSendMessage = (pedido) => {
+    const mensaje = `Hola ${pedido.nombreCliente}, ¿seguís necesitando el servicio o ya lo resolviste?`
+    // integrar con n8n
+    alert(`Mensaje enviado a ${pedido.telefono}: "${mensaje}"`)
+  }
+
   return (
     <div className="h-full bg-gray-900 text-white">
       <div className="h-full flex flex-col">
         <div className="p-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Pedidos</h1>
+          <h1 className="text-2xl font-bold">Pedidos en espera</h1>
           <div className="flex gap-4">
             <input
               type="text"
@@ -146,7 +160,6 @@ const PedidosListView = () => {
           </div>
         </div>
 
-        {/* Tabla */}
         <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-y-auto scrollbar-custom">
             {loadingOrders ? (
@@ -167,15 +180,16 @@ const PedidosListView = () => {
                     <th className="text-left p-4">Urgencia</th>
                     <th className="text-left p-4">Estado</th>
                     <th className="text-left p-4">Fecha</th>
+                    <th className="text-left p-4">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {pedidosFiltrados.map((pedido) => (
-                    <tr key={pedido.id} onClick={() => setSelectedPedido(pedido.id)} className={`border-b border-gray-700 hover:bg-gray-800 transition-colors ${selectedPedido === pedido.id ? "bg-gray-800" : ""}`}>
+                    <tr key={pedido.id} className="border-b border-gray-700 hover:bg-gray-800 transition-colors">
                       <td className="px-3 py-4 text-blue-400 font-medium">{pedido.id}</td>
                       <td className="px-3 py-4 font-medium">{pedido.nombreCliente}</td>
                       <td className="px-3 py-4 text-gray-300">
-                        {pedido.nombreInstalador ? pedido.nombreInstalador + " - " + pedido.orden : <span className="text-red-400 italic">Sin asignar</span>}
+                        {pedido.nombreInstalador || <span className="text-red-400 italic">Sin asignar</span>}
                       </td>
                       <td className="px-3 py-4 text-[15px] text-gray-300">{pedido.telefono}</td>
                       <td className="px-3 py-4 text-gray-300">{pedido.email}</td>
@@ -187,6 +201,11 @@ const PedidosListView = () => {
                       <td className="px-3 py-4">{getUrgenciaBadge(pedido.urgencia)}</td>
                       <td className="px-3 py-4">{getEstadoBadge(pedido.estado)}</td>
                       <td className="px-3 py-4 text-[15px] text-gray-300">{formatFecha(pedido.fecha)}hs</td>
+                      <td className="px-3 py-4">
+                        <button onClick={() => handleSendMessage(pedido)} className="px-3 py-1 bg-green-600 hover:bg-green-700 transition-colors text-white rounded text-sm font-semibold cursor-pointer">
+                          Enviar mensaje
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -199,10 +218,7 @@ const PedidosListView = () => {
           <span>Total pedidos: {pedidosFiltrados.length}</span>
           <div className="flex gap-4">
             <span>Recibidos: {pedidosFiltrados.filter((p) => p.estado === "recibido").length}</span>
-            <span>En Asignación: {pedidosFiltrados.filter((p) => p.estado === "en asignacion").length}</span>
-            <span>Asignados: {pedidosFiltrados.filter((p) => p.estado === "asignado").length}</span>
             <span>No Asignados: {pedidosFiltrados.filter((p) => p.estado === "no asignado").length}</span>
-            <span>Finalizados: {pedidosFiltrados.filter((p) => p.estado === "finalizado").length}</span>
           </div>
         </div>
       </div>
@@ -210,4 +226,4 @@ const PedidosListView = () => {
   )
 }
 
-export default PedidosListView
+export default PendingOrdersTable
