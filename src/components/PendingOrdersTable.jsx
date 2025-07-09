@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
 import useOrders from "../hooks/useOrders"
 
 const PendingOrdersTable = () => {
@@ -9,8 +9,14 @@ const PendingOrdersTable = () => {
   const [filterEstado, setFilterEstado] = useState("todos")
   const [filterZona, setFilterZona] = useState("todas")
   const [filterUrgencia, setFilterUrgencia] = useState("todas")
-  console.log("Orders:", orders);
+  const [sentMessages, setSentMessages] = useState(() => {
+    const stored = localStorage.getItem("sentMessages");
+    return stored ? JSON.parse(stored) : [];
+  });
 
+  useEffect(() => {
+    localStorage.setItem("sentMessages", JSON.stringify(sentMessages));
+  }, [sentMessages]);
 
   const emergencyMap = {
     high: "alta",
@@ -120,11 +126,30 @@ const PendingOrdersTable = () => {
     })
   }
 
-  const handleSendMessage = (pedido) => {
-    const mensaje = `Hola ${pedido.nombreCliente}, ¿seguís necesitando el servicio o ya lo resolviste?`
-    // integrar con n8n
-    alert(`Mensaje enviado a ${pedido.telefono}: "${mensaje}"`)
-  }
+  const handleSendMessage = async (pedido) => {
+    try {
+      const response = await fetch(import.meta.env.VITE_N8N_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: pedido.id || "",
+          name: pedido.nombreCliente || "",
+          phone: pedido.telefono || "",
+          order: pedido.orden || ""
+        }),
+      });
+
+      if (response.ok) {
+        setSentMessages((prev) => [...prev, pedido.id]);
+      } else {
+        console.error("Error al enviar el mensaje");
+      }
+    } catch (error) {
+      console.error("Error de red:", error);
+    }
+  };
 
   return (
     <div className="h-full bg-gray-900 text-white">
@@ -179,8 +204,8 @@ const PendingOrdersTable = () => {
                     <th className="text-left p-4">Zona</th>
                     <th className="text-left p-4">Urgencia</th>
                     <th className="text-left p-4">Estado</th>
-                    <th className="text-left p-4">Fecha</th>
-                    <th className="text-left p-4">Acciones</th>
+                    <th className="text-left p-4">Fecha de ingreso</th>
+                    <th className="text-left p-4">Acción</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -202,8 +227,16 @@ const PendingOrdersTable = () => {
                       <td className="px-3 py-4">{getEstadoBadge(pedido.estado)}</td>
                       <td className="px-3 py-4 text-[15px] text-gray-300">{formatFecha(pedido.fecha)}hs</td>
                       <td className="px-3 py-4">
-                        <button onClick={() => handleSendMessage(pedido)} className="px-3 py-1 bg-green-600 hover:bg-green-700 transition-colors text-white rounded text-sm font-semibold cursor-pointer">
-                          Enviar mensaje
+                        <button
+                          onClick={() => handleSendMessage(pedido)}
+                          className={`px-3 py-1 transition-colors rounded text-sm font-semibold cursor-pointer
+                            ${sentMessages.includes(pedido.id)
+                              ? "bg-gray-200 text-gray-900 hover:bg-gray-300"
+                              : "bg-green-600 text-white hover:bg-green-700"}
+                          `}
+                          title={sentMessages.includes(pedido.id) ? "¿Enviar mensaje nuevamente?" : ""}
+                        >
+                          {sentMessages.includes(pedido.id) ? "Mensaje enviado" : "Enviar mensaje"}
                         </button>
                       </td>
                     </tr>
