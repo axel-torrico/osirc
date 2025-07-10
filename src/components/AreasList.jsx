@@ -47,6 +47,7 @@ focus:border-blue-400"
                     <th className="text-left p-4">Departamento</th>
                     <th className="text-left p-4">Provincia</th>
                     <th className="text-left p-4">Instaladores</th>
+                    <th className="text-left p-4">Oficios</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -62,6 +63,22 @@ focus:border-blue-400"
                         {area.installer?.length > 0
                           ? area.installer.length + " instalador(es)"
                           : <span className="text-red-400 italic">Sin instaladores</span>}
+                      </td>
+                      <td className="px-3 py-4 text-gray-300">
+                        {area.installer?.length > 0 ? (
+                          <div className="flex gap-3 max-w-[125px]">
+                            {[...new Set(area["name (from job) (from installer)"])]?.map((name, index) => (
+                              <span
+                                key={index}
+                                className="px-2 py-1 bg-indigo-600 text-white rounded text-sm whitespace-nowrap"
+                              >
+                                {name}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-red-400 italic">Sin Oficios</span>
+                        )}
                       </td>
                     </tr>
                   ))}
