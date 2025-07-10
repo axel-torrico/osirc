@@ -1,7 +1,6 @@
 import React from 'react';
-import { ClockIcon } from "./Icons";
+import { FiClock } from "react-icons/fi";
 import EstadoBadge from "./EstadoBadge";
-
 
 function PedidosList({ pedidos, selectedPedido, onSelectPedido, loading }) {
   return (
@@ -27,7 +26,6 @@ function PedidosList({ pedidos, selectedPedido, onSelectPedido, loading }) {
                 }`}
             >
               <div className="font-medium mb-1">Pedido {pedido.id_client ?? pedido.id}</div>
-              {/* <div className="text-sm text-gray-400 mb-1">{pedido.name}</div> client_phone */}
               <div className="text-sm text-gray-500 mb-2">
                 {pedido.name ?? "Sin nombre"} • {pedido.client_phone ?? "Sin teléfono"}
               </div>
@@ -37,7 +35,7 @@ function PedidosList({ pedidos, selectedPedido, onSelectPedido, loading }) {
               <div className="flex items-center justify-between">
                 <EstadoBadge estado={pedido.status} />
                 <div className="flex items-center text-xs text-gray-500 gap-1">
-                  <ClockIcon className="w-3 h-3" />
+                  <FiClock className="w-3 h-3" />
                   {new Date(pedido.date).toLocaleTimeString("es-AR", {
                     hour: "2-digit",
                     minute: "2-digit",

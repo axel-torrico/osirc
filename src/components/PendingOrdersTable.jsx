@@ -192,6 +192,10 @@ const PendingOrdersTable = () => {
                 <p>Cargando pedidos...</p>
                 <div className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin mt-2"></div>
               </div>
+            ) : pedidosFiltrados.length === 0 ? (
+              <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                <p>Sin resultados</p>
+              </div>
             ) : (
               <table className="w-full">
                 <thead className="sticky top-0 bg-gray-800 border-b-2 border-gray-600">

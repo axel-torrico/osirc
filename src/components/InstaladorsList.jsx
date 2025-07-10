@@ -13,16 +13,31 @@ const InstaladorsList = () => {
   const mappedInstallers = useMemo(() => {
     if (!installers || !Array.isArray(installers)) return []
 
-    return installers.map((inst) => ({
-      id: inst.id,
-      nombre: inst.full_name,
-      telefono: inst.phone,
-      email: inst.installer_email,
-      oficio: inst["name (from job)"]?.[0] || "",
-      zona: inst["department (from area)"]?.[0] || "",
-      cantidadPedidos: inst.register_orders?.length || 0,
-      estado: inst.status?.trim().toLowerCase() === "available" ? "disponible" : "ocupado"
-    }))
+    return installers.map((inst) => {
+      const nombres = inst["name (from register_orders)"] || []
+      const estados = inst["status (from register_orders)"] || []
+      const ids = inst["id_client (from register_orders)"] || []
+
+      const clientesActivos = nombres
+        .map((nombre, idx) => ({
+          nombre,
+          id: ids[idx],
+          estado: estados[idx]
+        }))
+        .filter((c) => c.estado !== "Completed")
+
+      return {
+        id: inst.id,
+        nombre: inst.full_name,
+        telefono: inst.phone,
+        email: inst.installer_email,
+        oficio: inst["name (from job)"]?.[0] || "",
+        zona: inst["department (from area)"]?.[0] || "",
+        cantidadPedidos: inst.register_orders?.length || 0,
+        clientes: clientesActivos,
+        estado: inst.status?.trim().toLowerCase() === "available" ? "disponible" : "ocupado"
+      }
+    })
   }, [installers])
 
   const oficios = [...new Set(mappedInstallers.map((inst) => inst.oficio))]
@@ -107,8 +122,12 @@ const InstaladorsList = () => {
                   <div className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 </div>
               </div>
+            ) : instaladoresFiltrados.length === 0 ? (
+              <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                <p>Sin resultados</p>
+              </div>
             ) : (
-              <table className="w-full h-full">
+              <table className="w-full">
                 <thead className="sticky top-0 bg-gray-800 border-b-2 border-gray-600">
                   <tr>
                     <th className="text-left p-4 font-semibold">Nombre</th>
@@ -116,7 +135,6 @@ const InstaladorsList = () => {
                     <th className="text-left p-4 font-semibold">Email</th>
                     <th className="text-left p-4 font-semibold">Oficio</th>
                     <th className="text-left p-4 font-semibold">Zona</th>
-                    <th className="text-left p-4 font-semibold">Total de pedidos</th>
                     <th className="text-left p-4 font-semibold">Estados</th>
                   </tr>
                 </thead>
@@ -131,10 +149,27 @@ const InstaladorsList = () => {
                       <td className="px-3 py-4"><div className="font-medium">{instalador.nombre}</div></td>
                       <td className="px-3 py-4 text-[15px] text-gray-300">{instalador.telefono}</td>
                       <td className="px-3 py-4 text-gray-300">{instalador.email}</td>
-                      <td className="px-3 py-4"><span className="px-2 py-1 bg-indigo-600 text-white rounded text-sm whitespace-normal break-words max-w-[125px] inline-block">{instalador.oficio}</span></td>
+                      <td className="px-3 py-4"><span className="px-2 py-1 bg-indigo-600 text-white rounded text-sm whitespace-normal break-words max-w-[135px] inline-block">{instalador.oficio}</span></td>
                       <td className="px-3 py-4 text-gray-300">{instalador.zona}</td>
-                      <td className="px-3 py-4 text-center"><span className="text-lg font-bold text-blue-400">{instalador.cantidadPedidos}</span></td>
-                      <td className="px-3 py-4">{getEstadoBadge(instalador.estado)}</td>
+                      <td className="px-3 py-4">
+                        <div className="mb-2">{getEstadoBadge(instalador.estado)}</div>
+                        {instalador.estado === "ocupado" && (
+                          <div className="flex items-center gap-1">
+                            <div className="flex flex-col gap-1 text-gray-300">
+                              {instalador.clientes.length > 0 ? (
+                                instalador.clientes.map((c) => (
+                                  <span key={c.id} className="text-sm">
+                                    <span className="font-semibold text-blue-400">#{c.id}</span> - {c.nombre}
+                                  </span>
+                                ))
+                              ) : (
+                                "Sin clientes asignados"
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-400">({instalador.zona})</div>
+                          </div>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

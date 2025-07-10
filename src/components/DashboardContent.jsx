@@ -42,7 +42,6 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
   const zonasConPedidos = new Set(
     pedidosActivos.map(o => o.client_area?.toLowerCase().trim())
   );
-  console.log("Zonas con pedidos:", zonasConPedidos);
   const zonasConPedidosCount = zonasConPedidos.size;
 
   const renderContent = () => {

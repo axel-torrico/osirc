@@ -154,6 +154,10 @@ const PedidosListView = () => {
                 <p>Cargando pedidos...</p>
                 <div className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin mt-2"></div>
               </div>
+            ) : pedidosFiltrados.length === 0 ? (
+              <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                <p>Sin resultados</p>
+              </div>
             ) : (
               <table className="w-full">
                 <thead className="sticky top-0 bg-gray-800 border-b-2 border-gray-600">
@@ -175,7 +179,13 @@ const PedidosListView = () => {
                       <td className="px-3 py-4 text-blue-400 font-medium">{pedido.id}</td>
                       <td className="px-3 py-4 font-medium">{pedido.nombreCliente}</td>
                       <td className="px-3 py-4 text-gray-300">
-                        {pedido.nombreInstalador ? pedido.nombreInstalador + " - " + pedido.orden : <span className="text-red-400 italic">Sin asignar</span>}
+                        {pedido.nombreInstalador ? (
+                          <>
+                            {pedido.nombreInstalador} - <span className="text-green-400 italic">{pedido.orden}</span>
+                          </>
+                        ) : (
+                          <span className="text-red-400 italic">Sin asignar</span>
+                        )}
                       </td>
                       <td className="px-3 py-4 text-[15px] text-gray-300">{pedido.telefono}</td>
                       <td className="px-3 py-4 text-gray-300">{pedido.email}</td>
