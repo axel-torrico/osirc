@@ -1,5 +1,7 @@
 import React from 'react';
-import { UserIcon, BotIcon, WrenchIcon } from "./Icons";
+import { FiUser } from "react-icons/fi";
+import { RiRobot3Line } from "react-icons/ri";
+import { FiTool } from "react-icons/fi";
 
 function ChatMessages({ messages, loading }) {
   const normalizeSender = (sender) => {
@@ -11,13 +13,13 @@ function ChatMessages({ messages, loading }) {
   const getSenderIcon = (sender) => {
     switch (sender) {
       case "cliente":
-        return <UserIcon />;
+        return <FiUser />;
       case "bot":
-        return <BotIcon />;
+        return <RiRobot3Line />;
       case "instalador":
-        return <WrenchIcon />;
+        return <FiTool />;
       default:
-        return <UserIcon />;
+        return <FiUser />;
     }
   };
 

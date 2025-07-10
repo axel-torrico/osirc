@@ -28,8 +28,7 @@ const AreasList = () => {
           placeholder="Buscar zona"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none 
-focus:border-blue-400"
+          className="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm focus:outline-none focus:border-blue-400"
         />
       </div>
 
@@ -39,6 +38,10 @@ focus:border-blue-400"
               <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
                 <p>Cargando áreas...</p>
                 <div className="w-7 h-7 border-2 border-white border-t-transparent rounded-full animate-spin mt-2"></div>
+              </div>
+            ) : filteredAreas.length === 0 ? (
+              <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                <p>Sin resultados</p>
               </div>
             ) : (
               <table className="w-full">
