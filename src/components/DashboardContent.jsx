@@ -1,3 +1,5 @@
+"use client";
+
 import AdminMessagesView from "./AdminMessagesView";
 import InstaladorsList from "./InstaladorsList";
 import PedidosListView from "./PedidosListView";
@@ -43,6 +45,32 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
     pedidosActivos.map(o => o.client_area?.toLowerCase().trim())
   );
   const zonasConPedidosCount = zonasConPedidos.size;
+
+  const ocupacionPorOficioRaw = installers?.reduce((acc, installer) => {
+    const oficio = installer["slug (from job)"]?.[0] || "otro";
+    const nombre = installer["name (from job)"]?.[0] || oficio;
+    const status = installer.status?.trim().toLowerCase();
+
+    if (!acc[oficio]) {
+      acc[oficio] = {
+        nombre,
+        total: 0,
+        ocupados: 0,
+      };
+    }
+
+    acc[oficio].total += 1;
+    if (status !== "available") acc[oficio].ocupados += 1;
+
+    return acc;
+  }, {});
+
+  const ocupacionPorOficio = Object.entries(ocupacionPorOficioRaw)
+    .sort(([, a], [, b]) => (b.ocupados / b.total) - (a.ocupados / a.total))
+    .reduce((acc, [key, val]) => {
+      acc[key] = val;
+      return acc;
+    }, {});
 
   const renderContent = () => {
     if (activeSection === "pedidos") {
@@ -102,7 +130,35 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
           />
         </div>
 
-        <div className="border-2 border-gray-600 rounded-xl p-6 hover:border-gray-500 transition-colors">
+        {installers && (
+          <section className="border-2 border-gray-600 rounded-xl mb-6 transition-colors">
+            <div className="col-span-full p-6 rounded-xl">
+              <h3 className="text-xl font-semibold mb-4">Ocupación por oficio</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {Object.entries(ocupacionPorOficio).map(([slug, { nombre, total, ocupados }]) => {
+                  const porcentaje = Math.round((ocupados / total) * 100);
+                  return (
+                    <div
+                      key={slug}
+                      className="bg-gray-800 p-4 rounded-lg text-white shadow-md hover:bg-gray-700/50 transition-colors"
+                    >
+                      <h4 className="text-lg font-semibold capitalize mb-1">{nombre}</h4>
+                      <p className="text-sm mb-2">{ocupados} / {total} ocupados ({porcentaje}%)</p>
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div
+                          className="bg-yellow-400 h-2 rounded-full"
+                          style={{ width: `${porcentaje}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        <section className="border-2 border-gray-600 rounded-xl p-6 transition-colors">
           <h3 className="text-xl font-semibold mb-4">Actividad Reciente</h3>
           <div className="space-y-3 max-h-[250px] overflow-y-auto">
             {loadingMessages ? (
@@ -110,11 +166,11 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
             ) : messages?.slice(-4).reverse().map((msg) => (
               <div key={msg.id} className="flex justify-between">
                 <div className="max-w-[35%] flex flex-col gap-1">
-                  <span className="ext-sm truncate">
+                  <span className="text-sm truncate">
                     {msg.sender === "client" && "Mensaje de cliente"}
                     {msg.sender === "installer" && "Mensaje de instalador"}
                     {msg.sender === "bot" && "Mensaje de bot"}
-                    {" - "}{msg["name (from order)"]?.[0]}
+                    {" - " + msg["name (from order)"]?.[0]}
                   </span>
                   <span className="text-xs text-gray-400">
                     {new Date(msg.timestamp).toLocaleString("es-AR", {
@@ -131,7 +187,7 @@ const DashboardContent = ({ activeSection, activeSubSection }) => {
               </div>
             ))}
           </div>
-        </div>
+        </section>
       </div>
     );
   };
